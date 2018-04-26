@@ -253,7 +253,7 @@ This script installs sshpass package for copying sshkeys  into other containers
      Description of these yml files will be explained below.
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/main.yml
 - include: set-proxy.yml
-- include: ads.yml
+#- include: ads.yml
 - include: knownhost.yml
 - include: cluster_site.yml
 - include: site_run.yml
