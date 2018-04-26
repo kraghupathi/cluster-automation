@@ -178,16 +178,17 @@ This script installs sshpass package for copying sshkeys  into other containers
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/main.yml
 - include: copy-sshkeys.yml
 - include: setupemacs.yml
-- include: changes_in_makefile.yml                                                        
+- include: changes_in_makefile.yml
+- include: changes-in-sys-common-vars.yml
 #+END_SRC
 
-**** Run make in systems-model 
+**** Run make in systems-model and make some changes in the common_vars
      This script describes 
-     - Running make in systems-model repository
+     - Run make in systems-model repository
      - Keeping a backup file after running make
-     - Checking site.yaml file for syntax errors
-     - Updating proxy-port in systems-model
-#+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/main.yml
+     - Check the playbooks/scripts for syntax errors
+     - Update proxy-port in systems-model
+#+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/changes-in-sys-common-vars.yml
 
 - name: changing directory to systems-model and running make
   command: make
@@ -228,6 +229,22 @@ This script installs sshpass package for copying sshkeys  into other containers
      path: systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml
      regexp: "https_proxy:*"
      line: " https_proxy: {{proxy_env.https_proxy}}"
+
+- name: Update Hostmachine_ip common_vars/vars/main.yml
+  lineinfile:
+     path: systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml
+     regexp: "hostmachine_ip:*"
+     line: "hostmachine_ip: {{hostmachine_ip}}"
+     state: present
+  when: virtualization == "OpenVZ"
+
+- name: Update hostmachine_password variable in common_vars/vars/main.yml
+  lineinfile:
+     path: systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml
+     regexp: "hostmachine_password:*"
+     line: "hostmachine_password: {{hostmachine_password}}"
+     state: present
+  when: virtualization == "OpenVZ"
 
 
 #+END_SRC
@@ -756,7 +773,7 @@ This script downloads emacs- org-mode
      system-model. Also changes private-dns
 #+begin_src yml :tangle roles/config-with-vlead-user/tasks/cluster_site.yml
 ---
- - name: Backup main.yml
+ - name: Backup common_vars/vars/main.yml
    shell: 'cp main.yml backup-main-$(date +%d-%b-%Y).yml'
    args:
      chdir: systems-model/build/{{clustername}}/roles/common_vars/vars/ 
