@@ -296,12 +296,14 @@ Host gitlab.com
           path: ~/setup-ovpl-centos/scripts/config.sh
           regexp: 'export http_proxy=""'
           replace: 'export http_proxy="{{proxy_env.http_proxy}}"'
+      when: proxy_env.http_proxy is defined
      
     - name: Settiing proxy in config.sh to install openvz
       replace: 
           path: ~/setup-ovpl-centos/scripts/config.sh
           regexp: 'export https_proxy=""'
           replace: 'export https_proxy="{{proxy_env.https_proxy}}"'
+      when: proxy_env.https_proxy is defined
 
     - name: running install_openvz.sh shell script. May take 5 to 10 minutes. NOTE, System WILL BE REBOOTING AUTOMATICALLY after this TASK
       command: ./install_openvz.sh

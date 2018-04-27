@@ -248,7 +248,7 @@ This script installs sshpass package for copying sshkeys  into other containers
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/main.yml
 - include: set-proxy.yml
 #- include: ads.yml
-- include: knownhost.yml
+#- include: knownhost.yml
 - include: cluster_site.yml
 - include: site_run.yml
 - include: site_run2.yml
@@ -372,7 +372,7 @@ This script downloads emacs- org-mode
      This script copies set-proxy.yml file from templates to
      destination mentioned below and then runs playbook which sets up
      proxy in all other containers
-#+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/set-proxy.yml
+#+BEGIN_SRC yml 
 
 - name: Copying set-proxy template to ansible container
   template: src=set-proxy.yml dest=systems-model/build/{{clustername}}/
@@ -488,7 +488,7 @@ dependencies:
      container. From cluster's ansible container, this
      playbook will run.This sets proxy in all other
      containers
-#+BEGIN_SRC yml :tangle roles/config-with-vlead-user/templates/set-proxy.yml
+#+BEGIN_SRC yml 
 ---
 - hosts: router
   remote_user: root
@@ -585,8 +585,5 @@ dependencies:
      lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="" state=present
    - name: set proxy
      lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="proxy={{proxy_env.http_proxy}}" state=present
-
-
-
 #+END_SRC
 
