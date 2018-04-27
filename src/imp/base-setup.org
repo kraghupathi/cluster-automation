@@ -198,6 +198,7 @@
 
 - name: Creating and configuring ~/.ssh/config to clone system model
   template: src=ssh-config dest=~/.ssh/config mode=400
+  when: corkscrew_proxy is defined
 
 - name: Clonning systems-model repo; If repo already exist ignores the task
   command: git clone -b "{{systems_model_repo_branch}}" "{{systems_model_repo}}" "{{systems_model_dest}}"
@@ -247,6 +248,7 @@ Host gitlab.com
 - include: br0.yml
 - include: br1.yml
 - include: corkscrew_installation.yml
+  when: corkscrew_proxy is defined
 
 #+End_SRC
  

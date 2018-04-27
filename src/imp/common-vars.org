@@ -119,6 +119,7 @@ proxy_env:
    https_proxy: "http://proxy.iiit.ac.in:8080"
 
 
+virtualization: "OpenVZ"
 vlead_user_password: $6$39KX5f1ud1r3vAy8$cTdTp8CBENusQmS43z1gRbzQsLz1/r.nPrD2A/KruD3CW6wAjth15IdSaF1VkXnzvRqmO/H9LZLNEkfwfkCBs1 
 container_root_password: vlead123!@#!@#
 org_link: http://orgmode.org/org-8.2.10.tar.gz 
