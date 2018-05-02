@@ -205,30 +205,30 @@ This script installs sshpass package for copying sshkeys  into other containers
 - name: Backup Systems-model common_vars/vars/main.yml file 
   command: cp main.yml backup.yml
   args:
-   chdir: systems-model/build/{{clustername}}/roles/common_vars/vars
+   chdir: ~/systems-model/build/{{clustername}}/roles/common_vars/vars
 - name: Comment out none in common_vars/vars/main.yml file
   lineinfile: 
-     path: systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml
+     path: ~/systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml
      regexp: "none: none"
      line: " #none: none"
   when: proxy_env.http_proxy is defined
 - name: Set http_proxy
   lineinfile:
-     path: systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml
+     path: ~/systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml
      regexp: "http_proxy:*"
      line: " http_proxy: {{proxy_env.http_proxy}}"
   when: proxy_env.http_proxy is defined
 
 - name: Set https_proxy
   lineinfile:
-     path: systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml
+     path: ~/systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml
      regexp: "https_proxy:*"
      line: " https_proxy: {{proxy_env.https_proxy}}"
   when: proxy_env.https_proxy is defined
 
 - name: Update Hostmachine_ip common_vars/vars/main.yml
   lineinfile:
-     path: systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml
+     path: ~/systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml
      regexp: "hostmachine_ip:*"
      line: "hostmachine_ip: {{hostmachine_ip}}"
      state: present
@@ -236,7 +236,7 @@ This script installs sshpass package for copying sshkeys  into other containers
 
 - name: Update hostmachine_password variable in common_vars/vars/main.yml
   lineinfile:
-     path: systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml
+     path: ~/systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml
      regexp: "hostmachine_password:*"
      line: "hostmachine_password: {{hostmachine_password}}"
      state: present
@@ -345,26 +345,26 @@ This script downloads emacs- org-mode
 
 - name: Replacing router-ip in makefile of systems-model  
   replace:
-      path: systems-model/makefile
+      path: ~/systems-model/makefile
       regexp: "ROUTER_IP=10.4.14.207"
       replace: "ROUTER_IP={{ipaddress.router}}"
 
 - name: Replacing config-server ip in makefile of system-model
   replace:
-      path: systems-model/makefile
+      path: ~/systems-model/makefile
       regexp: "CONFIG_SERVER=10.4.14.208"
       replace: "CONFIG_SERVER={{ipaddress.config_server}}"
 
 - name: Replacing clustername in makefile of system-model
   replace:
-      path: systems-model/makefile
+      path: ~/systems-model/makefile
       regexp: "CLUSTER=cluster"
       replace: "CLUSTER={{clustername}}"
 
 
 - name: Replacing Smtp_smart_host in makefile of systems-model
   replace:
-      path: systems-model/makefile
+      path: ~/systems-model/makefile
       regexp: "SMTP_SMART_HOST= smtp.admin.iiit.ac.in"
       replace: "SMTP_SMART_HOST={{smtp_smart_host}}"
 
@@ -378,13 +378,13 @@ This script downloads emacs- org-mode
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/set-proxy.yml
 
 - name: Copying set-proxy template to ansible container
-  template: src=set-proxy.yml dest=systems-model/build/{{clustername}}/
+  template: src=set-proxy.yml dest=~/systems-model/build/{{clustername}}/
 
 - name: Running  set-proxy.yml file to set proxy in all other containers
   command: ansible-playbook -i hosts set-proxy.yml
   register: out
   args: 
-    chdir: systems-model/build/{{clustername}}/
+    chdir: ~/systems-model/build/{{clustername}}/
 - debug: var=out.stdout_lines
 #+END_SRC
 
@@ -396,7 +396,7 @@ This script downloads emacs- org-mode
  - name: Backup common_vars/vars/main.yml
    shell: 'cp main.yml backup-main-$(date +%d-%b-%Y).yml'
    args:
-     chdir: systems-model/build/{{clustername}}/roles/common_vars/vars/ 
+     chdir: ~/systems-model/build/{{clustername}}/roles/common_vars/vars/ 
 #+end_src
 
 **** Syntax check systems-model configure_servers.yaml and run configure_servers.yaml
@@ -408,7 +408,7 @@ This script downloads emacs- org-mode
   command: ansible-playbook -i hosts --list-tasks --syntax-check configure_servers.yaml
   register: out
   args:
-     chdir: systems-model/build/{{clustername}}/
+     chdir: ~/systems-model/build/{{clustername}}/
 - debug: var=out.stdout_lines
 
 #this step needs to be changed and done parallel
@@ -417,14 +417,14 @@ This script downloads emacs- org-mode
   shell: ansible-playbook -i hosts configure_servers.yaml && sudo iptables -I INPUT 12 -m state --state NEW -s {{hostmachine_ip}}/32 -p tcp -m tcp --dport 22 -j ACCEPT
   register: out
   args:
-     chdir: systems-model/build/{{clustername}}/
+     chdir: ~/systems-model/build/{{clustername}}/
 - debug: var=out.stdout_lines
 
 - name: Installing clients ossec-client,rsyslog-client,nagios... in all server nodes. ( May take 10 to 15 Minutes)
   shell: ansible-playbook -i hosts install_clients_in_servers.yaml
   register: out
   args:
-     chdir: systems-model/build/{{clustername}}/
+     chdir: ~/systems-model/build/{{clustername}}/
 - debug: var=out.stdout_lines
 
 
@@ -436,13 +436,13 @@ This script downloads emacs- org-mode
 ---
  - name: Updating private-dns-ips
    replace:
-        path: systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml       
+        path: ~/systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml       
         regexp: 'private_dns_ips: none'
         replace: 'private_dns_ips: \n    - 10.100.1.5'
        
  - name: Updating private-dns-zone
    replace:
-        path: systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml       
+        path: ~/systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml       
         regexp: 'private_dns_zone: none'
         replace: 'private_dns_zone: "{{clustername}}.virtual-labs.ac.in {{clustername}}.vlabs.ac.in"'
 
@@ -451,14 +451,14 @@ This script downloads emacs- org-mode
    command: ansible-playbook -i hosts --list-tasks --syntax-check configure_servers.yaml
    register: out
    args:
-      chdir: systems-model/build/{{clustername}}/
+      chdir: ~/systems-model/build/{{clustername}}/
  - debug: var=out.stdout_lines
 
  - name: Configuring all server nodes to set cluster dns ip in all server nodes
    command: ansible-playbook -i hosts  configure_servers.yaml
    register: out
    args:
-      chdir: systems-model/build/{{clustername}}/
+      chdir: ~/systems-model/build/{{clustername}}/
  - debug: var=out.stdout_lines
  
 #+END_SRC
