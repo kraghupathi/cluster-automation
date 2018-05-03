@@ -449,7 +449,7 @@ This script downloads emacs- org-mode
        replace: 'private_dns_zone: "{{clustername}}.virtual-labs.ac.in {{clustername}}.vlabs.ac.in"'
 
 - name: Copy set-private-dns-ips.yml file to config server
-  template: src=private.yml dest=~/systems-model/build/{{clustername}}/
+  template: src=set-private-dns-ips.yml dest=~/systems-model/build/{{clustername}}/
 
 - name: Setting cluster's private dns ip in all server nodes
   command: ansible-playbook -i hosts --tags setup_private_dns set-private-dns-ips.yml
