@@ -431,37 +431,49 @@ This script downloads emacs- org-mode
 #+end_src
 **** Update cluster DNS ips in common-vars
      Changes private-dns-ips and private-dns-zone in
-     common-vars of systems-model
+     common-vars of systems-model and then updates
+     "nameserver to cluster's private dns ip" in all server
+     nodes.
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/site_run2.yml
 ---
- - name: Updating private-dns-ips
-   replace:
-        path: ~/systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml       
-        regexp: 'private_dns_ips: none'
-        replace: 'private_dns_ips: \n    - 10.100.1.5'
+- name: Updating private-dns-ips
+  replace:
+       path: ~/systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml       
+       regexp: 'private_dns_ips: none'
+       replace: 'private_dns_ips: \n    - 10.100.1.5'
        
- - name: Updating private-dns-zone
-   replace:
-        path: ~/systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml       
-        regexp: 'private_dns_zone: none'
-        replace: 'private_dns_zone: "{{clustername}}.virtual-labs.ac.in {{clustername}}.vlabs.ac.in"'
+- name: Updating private-dns-zone
+  replace:
+       path: ~/systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml       
+       regexp: 'private_dns_zone: none'
+       replace: 'private_dns_zone: "{{clustername}}.virtual-labs.ac.in {{clustername}}.vlabs.ac.in"'
 
+- name: Copy set-private-dns-ips.yml file to config server
+  template: src=private.yml dest=~/systems-model/build/{{clustername}}/
 
- - name: Syntax checking configure_servers.yml
-   command: ansible-playbook -i hosts --list-tasks --syntax-check configure_servers.yaml
-   register: out
-   args:
-      chdir: ~/systems-model/build/{{clustername}}/
- - debug: var=out.stdout_lines
-
- - name: Configuring all server nodes to set cluster dns ip in all server nodes
-   command: ansible-playbook -i hosts  configure_servers.yaml
-   register: out
-   args:
-      chdir: ~/systems-model/build/{{clustername}}/
- - debug: var=out.stdout_lines
+- name: Setting cluster's private dns ip in all server nodes
+  command: ansible-playbook -i hosts --tags setup_private_dns set-private-dns-ips.yml
+  register: out
+  args:
+     chdir: ~/systems-model/build/{{clustername}}/
+- debug: var=out.stdout_lines
  
 #+END_SRC
+**** Template for setting up cluster private-dns ip to all servers
+     The following template is used to set cluster's
+     private-dns ip in all server nodes. This is for
+     internal name resolution within in the local/private
+     network.
+#+BEGIN_SRC yml :tangle roles/config-with-vlead-user/templates/set-private-dns-ips.yml
+---
+- name: Set private dns ips in all server nodes
+  hosts: all
+  remote_user: root
+
+  roles:
+     - common
+~             
+     #+END_SRC
 **** Handlers
  Comes into play when there is any notify field mentioned in tasks of this role
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/handlers/main.yml
@@ -497,19 +509,21 @@ dependencies:
   remote_user: root
 
   tasks: 
-  - name: Delete proxy if there is any
-    lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="" state=present
-  - name: set proxy
-    lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="proxy={{proxy_env.http_proxy}}" state=present
+   - name: Delete proxy if there is any
+     lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="" state=present
+   - name: set proxy
+     lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="proxy={{proxy_env.http_proxy}}" state=present
+     when: proxy_env.http_proxy is defined
 
 - hosts: private_dns
   remote_user: root
 
   tasks: 
-  - name: Delete proxy if there is any
-    lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="" state=present
-  - name: set proxy
-    lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="proxy={{proxy_env.http_proxy}}" state=present
+   - name: Delete proxy if there is any
+     lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="" state=present
+   - name: set proxy
+     lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="proxy={{proxy_env.http_proxy}}" state=present
+     when: proxy_env.http_proxy is defined
 
 
 - hosts: public_dns
@@ -520,6 +534,7 @@ dependencies:
      lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="" state=present
    - name: set proxy
      lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="proxy={{proxy_env.http_proxy}}" state=present
+     when: proxy_env.http_proxy is defined
 
 - hosts: ossec_server
   remote_user: root
@@ -530,6 +545,7 @@ dependencies:
      lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="" state=present
    - name: set proxy
      lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="proxy={{proxy_env.http_proxy}}" state=present
+     when: proxy_env.http_proxy is defined
 
 - hosts: rsyslog_server
   remote_user: root
@@ -540,6 +556,7 @@ dependencies:
      lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="" state=present
    - name: set proxy
      lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="proxy={{proxy_env.http_proxy}}" state=present
+     when: proxy_env.http_proxy is defined
 
 - hosts: reverseproxy_server 
   remote_user: root
@@ -549,6 +566,7 @@ dependencies:
      lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="" state=present
    - name: set proxy
      lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="proxy={{proxy_env.http_proxy}}" state=present
+     when: proxy_env.http_proxy is defined
 
 
 - hosts: nagios_server 
@@ -559,6 +577,7 @@ dependencies:
      lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="" state=present
    - name: set proxy
      lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="proxy={{proxy_env.http_proxy}}" state=present
+     when: proxy_env.http_proxy is defined
 
 
 - hosts: ads_server 
@@ -569,7 +588,7 @@ dependencies:
      lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="" state=present
    - name: set proxy
      lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="proxy={{proxy_env.http_proxy}}" state=present
-
+     when: proxy_env.http_proxy is defined
 
 - hosts: rsnapshot_server
   remote_user: root
@@ -579,6 +598,7 @@ dependencies:
      lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="" state=present
    - name: set proxy
      lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="proxy={{proxy_env.http_proxy}}" state=present
+     when: proxy_env.http_proxy is defined
 
 - hosts: ansible_server
   remote_user: root
@@ -588,5 +608,6 @@ dependencies:
      lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="" state=present
    - name: set proxy
      lineinfile: path=/etc/yum.conf regexp="^proxy.*" line="proxy={{proxy_env.http_proxy}}" state=present
+     when: proxy_env.http_proxy is defined
 #+END_SRC
 
