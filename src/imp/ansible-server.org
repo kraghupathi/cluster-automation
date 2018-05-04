@@ -472,8 +472,7 @@ This script downloads emacs- org-mode
 
   roles:
      - common
-~             
-     #+END_SRC
+#+END_SRC
 **** Handlers
  Comes into play when there is any notify field mentioned in tasks of this role
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/handlers/main.yml
