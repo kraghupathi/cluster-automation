@@ -185,7 +185,7 @@ This script installs sshpass package for copying sshkeys  into other containers
 #+BEGIN_SRC yml :tangle roles/config-with-vlead-user/tasks/changes-in-sys-common-vars.yml
 
 - name: changing directory to systems-model and running make
-  command: make
+  command: make CLUSTER="{{clustername}}"
   register: out
   args: 
     chdir: ~/systems-model/
@@ -198,37 +198,37 @@ This script installs sshpass package for copying sshkeys  into other containers
 - debug: var=out.stdout_lines
 - name: Changing proxy-port of system-model
   lineinfile:
-     path: ~/systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml 
+     path: "{{systems_model_common_vars_path}}"/main.yml
      regexp: '^proxy_port:.*'
      line: 'proxy_port: {{proxy_port}}'
      state: present
 - name: Backup Systems-model common_vars/vars/main.yml file 
   command: cp main.yml backup.yml
   args:
-   chdir: ~/systems-model/build/{{clustername}}/roles/common_vars/vars
+   chdir: "{{systems_model_common_vars_path}}"
 - name: Comment out none in common_vars/vars/main.yml file
   lineinfile: 
-     path: ~/systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml
+     path: "{{systems_model_common_vars_path}}"/main.yml
      regexp: "none: none"
      line: " #none: none"
   when: proxy_env.http_proxy is defined
 - name: Set http_proxy
   lineinfile:
-     path: ~/systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml
+     path: "{{systems_model_common_vars_path}}"/main.yml
      regexp: "http_proxy:*"
      line: " http_proxy: {{proxy_env.http_proxy}}"
   when: proxy_env.http_proxy is defined
 
 - name: Set https_proxy
   lineinfile:
-     path: ~/systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml
+     path: "{{systems_model_common_vars_path}}"/main.yml
      regexp: "https_proxy:*"
      line: " https_proxy: {{proxy_env.https_proxy}}"
   when: proxy_env.https_proxy is defined
 
 - name: Update Hostmachine_ip common_vars/vars/main.yml
   lineinfile:
-     path: ~/systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml
+     path: "{{systems_model_common_vars_path}}"/main.yml
      regexp: "hostmachine_ip:*"
      line: "hostmachine_ip: {{hostmachine_ip}}"
      state: present
@@ -236,7 +236,7 @@ This script installs sshpass package for copying sshkeys  into other containers
 
 - name: Update hostmachine_password variable in common_vars/vars/main.yml
   lineinfile:
-     path: ~/systems-model/build/{{clustername}}/roles/common_vars/vars/main.yml
+     path: "{{systems_model_common_vars_path}}"/main.yml
      regexp: "hostmachine_password:*"
      line: "hostmachine_password: {{hostmachine_password}}"
      state: present

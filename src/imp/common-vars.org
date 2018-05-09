@@ -120,8 +120,13 @@ proxy_env:
 
 
 virtualization: "OpenVZ"
-vlead_user_password: $6$39KX5f1ud1r3vAy8$cTdTp8CBENusQmS43z1gRbzQsLz1/r.nPrD2A/KruD3CW6wAjth15IdSaF1VkXnzvRqmO/H9LZLNEkfwfkCBs1 
+
+### Password "vlead" user on ansible/configu server.
+vlead_user_password: $6$39KX5f1ud1r3vAy8$cTdTp8CBENusQmS43z1gRbzQsLz1/r.nPrD2A/KruD3CW6wAjth15IdSaF1VkXnzvRqmO/H9LZLNEkfwfkCBs1
+
+## Each cluster container will have the following password for root.
 container_root_password: vlead123!@#!@#
+
 org_link: http://orgmode.org/org-8.2.10.tar.gz 
 
 corkscrew_proxy: proxy.iiit.ac.in
@@ -133,6 +138,10 @@ centos_template: http://files.vlabs.ac.in/downloads/templates/centos-6.9-x86-bas
 
 systems_model_repo: git@gitlab.com:vlead-systems/systems-model.git
 systems_model_repo_branch: cluster-automation
+
+## No need to edit this line, systems_model_common_vars_path is a location of othe systems model common_vars file.
+systems_model_common_vars_path: "~/systems-model/build/{{clustername}}/roles/common_vars/vars"
+
 systems_model_dest: "{{corkscrew_dest}}/systems-model"
 
 ipaddress:
@@ -153,9 +162,8 @@ net_mask: 255.255.252.0
 
 proxy_port: 8080
 
+##SMTP server for mail forwarding. Through which mails from each container will be forwarded to destination 
 smtp_smart_host: stpi-router.vlabs.ac.in
-
-#setup_ovpl_centos: https://github.com/vlead/cluster-setup-ovpl-centos.git
 
 setup_ovpl_centos: https://github.com/vlead/setup-ovpl-centos.git
 
