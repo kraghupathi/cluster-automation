@@ -29,12 +29,45 @@
     cd cluster-automation
     #+END_EXAMPLE
   7. Run make
-  8. Edit the file
+  8. Get the google OAuth2 keys from
+     [[https://console.developers.google.com/apis/credentials][Google OAuth2 console]]
+     
+     Note down the =Client ID= and =Client secret=. these
+     are needed in the common_vars file( 9th step). 
+  9. Edit the file
      =~/cluster-automation/build/code/imp/roles/common_vars/vars/main.yml=
-     with the appropriate variable values
-  9. Run =bootstrap.sh=
-     #+BEGIN_EXAMPLE
-     cd ~/cluster-automation
-     sh bootstrap.sh <machine root password>
-     #+END_EXAMPLE
+     with the appropriate variable values.
+  10. Run =bootstrap.sh=
+      #+BEGIN_EXAMPLE
+      cd ~/cluster-automation
+      sh bootstrap.sh <machine root password>
+      #+END_EXAMPLE
+* Post Installation steps
+** Enable hooks between ADS and Config/ansible server
+   - NOTE :: To Enter into containers us the following
+             commands on host machine.
+	     #+BEGIN_SRC 
+	     vzctl enter 1002    #for ansible/config server
+	     vzctl enter 1009    #for ADS server
+	     vzctl enter CTID    
+	     #+END_SRC
+   1. Go to ADS server ( container ID - 1009) and copy the
+      =~/.ssh/id_rsa.pub= key.
+   2. Go to Ansible/config server ( container id - 1002).
+      - Use vlead user by executing the below command
+	#+BEGIN_SRC 
+	su - vlead
+	#+END_SRC
+   3. Paste the copied ( step 1) key in 
+      =/home/vlead/.ssh/authorized_keys= as follows in
+      ansible server.
+      #+BEGIN_SRC 
+      command="hooks.sh",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty <<ADS-SERVER-id_rsa.pub.key>>
+      #+END_SRC
+      - NOTE :: Replace <<ADS-SERVER-id_rsa.pub.key>> with
+                actual root account's =id_rsa.pub= of ADS
+                server.
+   
+  
 
+   
