@@ -44,12 +44,11 @@
       #+END_EXAMPLE
 * Post Installation steps
 ** Enable hooks between ADS and Config/ansible server
-   - NOTE :: To Enter into containers us the following
+   - NOTE :: To Enter into containers use the following
              commands on host machine.
 	     #+BEGIN_SRC 
 	     vzctl enter 1002    #for ansible/config server
 	     vzctl enter 1009    #for ADS server
-	     vzctl enter CTID    
 	     #+END_SRC
    1. Go to ADS server ( container ID - 1009) and copy the
       =~/.ssh/id_rsa.pub= key.
@@ -70,7 +69,28 @@
       - NOTE 2 :: Make sure that the file
                   =/home/vlead/.ssh/authorized_keys=
                   permissions should be 644.
-   
+		  #+BEGIN_SRC 
+		  chmod 644 /home/vlead/.ssh/authorized_keys
+		  #+END_SRC
+** Steps to deploy lab
+   1. Go to ADS server (Container ID 1009)
+   2. Execute following commands
+      #+BEGIN_SRC 
+       cd ~/ovpl/
+       ./manage_services.sh stop
+       ./manage_services.sh start
+      #+END_SRC
+   3. Run app.py 
+      #+BEGIN_SRC 
+       cd ~/ovpl/src/ads-web-app/
+       export http_proxy="http://proxy.iiit.ac.in:8080"
+       export https_proxy="http://proxy.iiit.ac.in:8080"      
+       python app.py &
+      #+END_SRC
+   4. Use http://ads.<cluster-name>.vlabs.ac.in:8080 url and
+      deploy the lab.
+
+
   
 
    
