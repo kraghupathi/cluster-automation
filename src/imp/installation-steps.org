@@ -64,9 +64,12 @@
       #+BEGIN_SRC 
       command="hooks.sh",no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty <<ADS-SERVER-id_rsa.pub.key>>
       #+END_SRC
-      - NOTE :: Replace <<ADS-SERVER-id_rsa.pub.key>> with
+      - NOTE 1 :: Replace <<ADS-SERVER-id_rsa.pub.key>> with
                 actual root account's =id_rsa.pub= of ADS
                 server.
+      - NOTE 2 :: Make sure that the file
+                  =/home/vlead/.ssh/authorized_keys=
+                  permissions should be 644.
    
   
 
