@@ -30,14 +30,14 @@
 * Important Repositories
   The following repositories are used in automation steps
   - [[https://github.com/vlead/cluster-automation][cluster-automation]]
-  - [[https://github.com/vlead/cluster-setup-ovpl-centos][cluster-setup-ovpl-centos]]
-  - [[https://bitbucket.org/vlead/systems-model/][Systems-model]]
+  - [[https://github.com/vlead/setup-ovpl-centos][setup-ovpl-centos]]
+  - [[https://gitlab.com/vlead-systems/systems-model][systems-model]]
   
 * Issues and Milestones
   - [[https://github.com/vlead/cluster-automation/issues][Issues]]
   - [[https://github.com/vlead/cluster-automation/milestones][Milestones]]
 
-* Branches in cluster-automation repository
+* Main Branches in cluster-automation repository
   - Master   - Production repo
   - Develop  - Development repo ( similar to Master) 
   - Features - Adding features
