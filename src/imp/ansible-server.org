@@ -230,7 +230,7 @@ This script installs sshpass package for copying sshkeys  into other containers
   lineinfile:
      path: "{{systems_model_common_vars_path}}/main.yml"
      regexp: "hostmachine_ip:*"
-     line: "hostmachine_ip: {{hostmachine_ip}}"
+     line: 'hostmachine_ip: "{{hostmachine_ip}}"'
      state: present
   when: virtualization == "OpenVZ"
 
@@ -238,7 +238,7 @@ This script installs sshpass package for copying sshkeys  into other containers
   lineinfile:
      path: "{{systems_model_common_vars_path}}/main.yml"
      regexp: "hostmachine_password:*"
-     line: "hostmachine_password: {{hostmachine_password}}"
+     line: 'hostmachine_password: "{{hostmachine_password}}"'
      state: present
   when: virtualization == "OpenVZ"
 
@@ -246,14 +246,14 @@ This script installs sshpass package for copying sshkeys  into other containers
   lineinfile:
      path: "{{systems_model_common_vars_path}}/main.yml"
      regexp: "^consumer_key:.*"
-     line: "consumer_key: "{{consumer_key}}""
+     line: 'consumer_key: "{{consumer_key}}"'
      state: present
 
 - name: Updating consumer_key on ADS server
   lineinfile:
      path: "{{systems_model_common_vars_path}}/main.yml"
      regexp: "^consumer_secret:.*"
-     line: "consumer_secret: "{{consumer_secret}}""
+     line: 'consumer_secret: "{{consumer_secret}}"'
      state: present
 
 
