@@ -242,6 +242,20 @@ This script installs sshpass package for copying sshkeys  into other containers
      state: present
   when: virtualization == "OpenVZ"
 
+- name: Updating consumer_key on ADS server
+  lineinfile:
+     path: "{{systems_model_common_vars_path}}/main.yml"
+     regexp: "^consumer_key:.*"
+     line: "consumer_key: "{{consumer_key}}""
+     state: present
+
+- name: Updating consumer_key on ADS server
+  lineinfile:
+     path: "{{systems_model_common_vars_path}}/main.yml"
+     regexp: "^consumer_secret:.*"
+     line: "consumer_secret: "{{consumer_secret}}""
+     state: present
+
 
 #+END_SRC
 
@@ -618,3 +632,4 @@ dependencies:
      when: proxy_env.http_proxy is defined
 #+END_SRC
 
+     
