@@ -25,7 +25,7 @@
      #+END_EXAMPLE
   6. Clone the cluster-automation repository
     #+BEGIN_EXAMPLE
-    git clone https://github.com/vlead/cluster-automation.git
+    git clone https://gitlab.com/vlead-systems/cluster-automation
     cd cluster-automation
     #+END_EXAMPLE
   7. Run make
